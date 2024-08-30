@@ -215,37 +215,68 @@ class MinesweeperAI():
                 elif 0 <= i < self.height and 0 <= j < self.width:
                     
                     neighbors.add((i,j))
-             
+        
         new_sentence = Sentence(neighbors, count)
         self.knowledge.append(new_sentence)
         
+        loop = True
+        while loop:
         #4.
-        for sentence in self.knowledge:
-            sentence_mines = sentence.known_mines()
-            if sentence_mines:
-                cell_mines = sentence.known_mines()
-                for cell in cell_mines.copy():
-                    self.mark_mine(cell)
+            loop = False
+            for sentence in self.knowledge:
+                
+                sentence_mines = sentence.known_mines()
+                if sentence_mines:
 
-            sentence_safes = sentence.known_safes()
-            if sentence_safes:
-                cell_safes = sentence.known_safes()
-                for cell in cell_safes.copy():
-                    self.mark_safe(cell)
+                    for cell in sentence_mines.copy():
+                        loop = True #######################################
+                        self.mark_mine(cell)
 
-        #5.
-       # subset_sentence = 
-        for sentence_1 in self.knowledge:
-            for sentence_2 in self.knowledge:
-                if sentence_2.cells.issubset(sentence_1.cells):
-                    new_cells = sentence_1.cells - sentence_2.cells
-                    new_count = sentence_1.count - sentence_2.count
-                    new_sentence = Sentence(new_cells, new_count)
+                sentence_safes = sentence.known_safes()
+                if sentence_safes:
 
-                    if new_sentence not in self.knowledge:
-                        self.knowledge.add(new_sentence)
+                    for cell in sentence_safes.copy():
+                        loop = True #######################################
+                        self.mark_safe(cell)
 
-        
+            #5.
+        # subset_sentence = 
+            for sentence_1 in self.knowledge:
+                for sentence_2 in self.knowledge:
+
+                    if sentence_1.cells == sentence_2.cells:
+                        continue
+
+                    if sentence_2.cells.issubset(sentence_1.cells):
+                        new_cells = sentence_1.cells - sentence_2.cells
+                        new_count = sentence_1.count - sentence_2.count
+
+                        new_sentence = Sentence(new_cells, new_count)
+
+                        if new_sentence not in self.knowledge:
+                            loop = True #######################################
+                            self.knowledge.append(new_sentence)
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def make_safe_move(self):
         """
@@ -256,7 +287,9 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for cell in self.safes:
+            if cell not in self.moves_made:
+                return cell
 
     def make_random_move(self):
         """
@@ -265,4 +298,7 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        for i in range(self.height):
+            for j in range(self.width):
+                if (i,j) not in self.mines and (i,j) not in self.moves_made:
+                    return (i, j)
