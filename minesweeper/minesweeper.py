@@ -193,15 +193,13 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        #1.
+        # 1.
         self.moves_made.add(cell)
 
-        #2.
+        # 2.
         self.mark_safe(cell)
 
-        #3.
-     #   new_sentence = Sentence()
-        #new_sentence.count = count
+        # 3.
         neighbors = set()
         for i in range(cell[0] - 1, cell[0] + 2):
             for j in range(cell[1] - 1, cell[1] + 2):
@@ -214,14 +212,15 @@ class MinesweeperAI():
                     continue
                 elif 0 <= i < self.height and 0 <= j < self.width:
                     
-                    neighbors.add((i,j))
+                    neighbors.add((i, j))
         
         new_sentence = Sentence(neighbors, count)
         self.knowledge.append(new_sentence)
         
         loop = True
         while loop:
-        #4.
+
+            # 4.
             loop = False
             for sentence in self.knowledge:
                 
@@ -229,18 +228,17 @@ class MinesweeperAI():
                 if sentence_mines:
 
                     for cell in sentence_mines.copy():
-                        loop = True #######################################
+                        loop = True 
                         self.mark_mine(cell)
 
                 sentence_safes = sentence.known_safes()
                 if sentence_safes:
 
                     for cell in sentence_safes.copy():
-                        loop = True #######################################
+                        loop = True 
                         self.mark_safe(cell)
 
-            #5.
-        # subset_sentence = 
+            # 5.
             for sentence_1 in self.knowledge:
                 for sentence_2 in self.knowledge:
 
@@ -254,29 +252,8 @@ class MinesweeperAI():
                         new_sentence = Sentence(new_cells, new_count)
 
                         if new_sentence not in self.knowledge:
-                            loop = True #######################################
+                            loop = True 
                             self.knowledge.append(new_sentence)
-
-            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     def make_safe_move(self):
         """
@@ -300,5 +277,5 @@ class MinesweeperAI():
         """
         for i in range(self.height):
             for j in range(self.width):
-                if (i,j) not in self.mines and (i,j) not in self.moves_made:
+                if (i, j) not in self.mines and (i, j) not in self.moves_made:
                     return (i, j)
